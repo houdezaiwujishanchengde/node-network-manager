@@ -357,6 +357,35 @@ const wifiConnect = (ssid, password, hidden = false) => {
   }
 };
 
+// Set interface to DHCP
+const setDhcpConnection = (profile) =>{
+  cli(["connection", "modify", String(profile), "ipv4.method", "auto"]);
+};
+
+// Set static IP for a connection profile
+const setStaticIpConnection = (profile, ipv4, gateway, dns = []) => {
+  const dnsServers = dns.length > 0 ? dns.join(",") : "";
+  const cmd = [
+    "connection", "modify", String(profile),
+    "ipv4.method", "manual",
+    "ipv4.addresses", `${ipv4}/24`,
+    "ipv4.gateway", gateway
+  ];
+  if (dnsServers) {
+    cmd.push("ipv4.dns", dnsServers);
+  }
+  return cli(cmd);
+};
+
+// Get DNS settings for a connection profile
+const getDnsConnection = async (profile) => {
+  const data = await clib(["connection", "show", String(profile)]);
+  const dnsEntry = data.find(item => item["IP4.DNS[1]"]);
+  return dnsEntry ? dnsEntry["IP4.DNS[1]"] : null;
+};
+
+
+
 // exports
 module.exports = {
   getIPv4,
@@ -389,5 +418,10 @@ module.exports = {
   wifiHotspot,
   wifiCredentials,
   getWifiList,
-  wifiConnect
+  wifiConnect,
+  setDhcpConnection,
+  setStaticIpConnection,
+  getDnsConnection,
 };
+
+

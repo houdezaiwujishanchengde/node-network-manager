@@ -325,11 +325,44 @@ network
   .catch((error) => console.log(error));
 ```
 
+#### set DHCP (v1.0.15) _(new)_
+
+```javascript
+network
+  .setDhcpConnection("test_connection_1")
+  .then((data) => console.log(data))
+  .catch((error) => console.log(error));
+```
+
+#### set Manual (v1.0.15) _(new)_
+
+```javascript
+network
+  .setStaticIpConnection("test_connection_1", "192.168.0.10" , "192.168.0.1" , "8.8.8.8 8.8.4.4")
+  .then((data) => console.log(data))
+  .catch((error) => console.log(error));
+```
+
+#### get DNS (v1.0.15) _(new)_
+
+```javascript
+network
+  .getDnsConnection("test_connection_1")
+  .then((data) => console.log(data))
+  .catch((error) => console.log(error));
+```
+
 ## License
 
 This project is licensed under the MIT License
 
 ## Change log
+
+### 1.0.15 (2024-09-05)
+
+- Added setDhcpConnection function
+- Added setStaticIpConnection function
+- Added getDnsConnection function
 
 ### 1.0.13 (2024-03-17)
 
