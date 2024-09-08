@@ -352,14 +352,23 @@ network
   .catch((error) => console.log(error));
 ```
 
+#### get IPv4 Method (v1.0.15) _(new)_
+
+```javascript
+network
+  .getIPv4ConfigMethod ("test_connection_1")
+  .then((data) => console.log(data))
+  .catch((error) => console.log(error));
+```
+
 ## License
 
 This project is licensed under the MIT License
 
 ## Change log
 
-### 1.0.15 (2024-09-05)
-
+### 1.0.15 (2024-09-09)
+- Added getIPv4ConfigMethod function
 - Added setDhcpConnection function
 - Added setStaticIpConnection function
 - Added getDnsConnection function

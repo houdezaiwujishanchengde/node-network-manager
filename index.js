@@ -384,6 +384,12 @@ const getDnsConnection = async (profile) => {
   return dnsEntry ? dnsEntry["IP4.DNS[1]"] : null;
 };
 
+// Get IPv4 configuration method (auto or manual) for a connection profile
+const getIPv4ConfigMethod = async (profile) => {
+    const data = await clib(["connection", "show", String(profile)]);
+    const ipv4Config = data.find(item => item["ipv4.method"]);
+    return ipv4Config["ipv4.method"];
+};
 
 
 // exports
@@ -422,6 +428,7 @@ module.exports = {
   setDhcpConnection,
   setStaticIpConnection,
   getDnsConnection,
+  getIPv4ConfigMethod,
 };
 
 
