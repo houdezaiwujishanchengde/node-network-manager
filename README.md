@@ -367,8 +367,10 @@ This project is licensed under the MIT License
 
 ## Change log
 
-### 1.0.15 (2024-09-09)
+### 1.0.16 (2024-09-09)
 - Added getIPv4ConfigMethod function
+
+### 1.0.15 (2024-09-05)
 - Added setDhcpConnection function
 - Added setStaticIpConnection function
 - Added getDnsConnection function
