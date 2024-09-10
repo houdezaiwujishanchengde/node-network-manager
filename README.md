@@ -366,6 +366,8 @@ network
 This project is licensed under the MIT License
 
 ## Change log
+### 1.0.17 (2024-09-10)
+- Added setDhcpConnection function return value
 
 ### 1.0.16 (2024-09-09)
 - Added getIPv4ConfigMethod function
