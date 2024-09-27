@@ -358,8 +358,14 @@ const wifiConnect = (ssid, password, hidden = false) => {
 };
 
 // Set interface to DHCP
-const setDhcpConnection = (profile) =>{
-  return cli(["connection", "modify", String(profile), "ipv4.method", "auto"]);
+const setDhcpConnection = (profile) => {
+  return cli([
+    "connection", "modify", String(profile),
+    "ipv4.method", "auto",
+    "ipv4.addresses", "",
+    "ipv4.gateway", "",
+    "ipv4.dns", ""
+  ]);
 };
 
 // Set static IP for a connection profile
