@@ -397,6 +397,22 @@ const getIPv4ConfigMethod = async (profile) => {
     return ipv4Config["ipv4.method"];
 };
 
+// Get network device type based on the connection profile using nmcli
+const getNetworkDeviceType = async (profile) => {
+  const data = await clib(["device"]);
+  const devices = Object.values(data[0]).map(value => {
+    const parts = value.trim().split(/\s+/);
+    return {
+      DEVICE: parts[0],
+      TYPE: parts[1],
+      STATE: parts[2],
+      CONNECTION: parts.slice(3).join(" ") 
+    };
+  });
+
+  const matchedDevice = devices.find(item => item.DEVICE === profile || item.CONNECTION === profile);
+  return matchedDevice ? matchedDevice.TYPE : `No device found for profile: ${profile}`;
+};
 
 // exports
 module.exports = {
@@ -435,6 +451,7 @@ module.exports = {
   setStaticIpConnection,
   getDnsConnection,
   getIPv4ConfigMethod,
+  getNetworkDeviceType,
 };
 
 
