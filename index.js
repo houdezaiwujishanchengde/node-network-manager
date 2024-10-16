@@ -370,7 +370,12 @@ const setDhcpConnection = (profile) => {
 
 // Set static IP for a connection profile
 const setStaticIpConnection = (profile, ipv4, gateway, dns = []) => {
-  const dnsServers = dns.length > 0 ? dns.join(",") : "";
+  const dnsServers = Array.isArray(dns) 
+    ? dns.join(",") 
+    : typeof dns === "string" && dns.length > 0 
+    ? dns 
+    : "";
+
   const cmd = [
     "connection", "modify", String(profile),
     "ipv4.method", "manual",
