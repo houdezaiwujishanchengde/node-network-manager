@@ -266,6 +266,32 @@ const getDeviceInfoIPDetail = async (deviceName) => {
     };
   })[0];
 };
+
+const getAllDeviceInfoIPDetailWithType = async (deviceName) => {
+  const statesMap = {
+    10: "unmanaged",
+    30: "disconnected",
+    100: "connected",
+  };
+  const data = await clib(["device", "show", String(deviceName)]);
+  return data.map((item) => {
+    const state = parseInt(item["GENERAL.STATE"]) || 10; // unmanaged by default
+    return {
+      device: item["GENERAL.DEVICE"],
+      type: item["GENERAL.TYPE"],
+      state: statesMap[state],
+      connection: item["GENERAL.CONNECTION"],
+      mac: item["GENERAL.HWADDR"],
+      ipV4: item["IP4.ADDRESS[1]"]?.replace(/\/[0-9]{2}/g, ""),
+      netV4: item["IP4.ADDRESS[1]"],
+      gatewayV4: item["IP4.GATEWAY"],
+      ipV6: item["IP6.ADDRESS[1]"]?.replace(/\/[0-9]{2}/g, ""),
+      netV6: item["IP6.ADDRESS[1]"],
+      gatewayV6: item["IP6.GATEWAY"],
+    };
+  });
+};
+
 const getAllDeviceInfoIPDetail = async () => {
   const statesMap = {
     10: "unmanaged",
@@ -443,6 +469,7 @@ module.exports = {
   deviceConnect,
   deviceDisconnect,
   getDeviceInfoIPDetail,
+  getAllDeviceInfoIPDetailWithType,
   getAllDeviceInfoIPDetail,
   // wifi
   wifiEnable,
