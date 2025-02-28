@@ -276,16 +276,37 @@ const getAllDeviceInfoIPDetailWithType = async (deviceName) => {
   const data = await clib(["device", "show", String(deviceName)]);
   return data.map((item) => {
     const state = parseInt(item["GENERAL.STATE"]) || 10; // unmanaged by default
+
+    const ipV4Addresses = [];
+    Object.keys(item).forEach(key => {
+      if (key.startsWith("IP4.ADDRESS")) {
+        const ip = item[key];
+        if (ip) {
+          ipV4Addresses.push(ip.replace(/\/[0-9]{2}/g, ""));
+        }
+      }
+    });
+
+    const ipV6Addresses = [];
+    Object.keys(item).forEach(key => {
+      if (key.startsWith("IP6.ADDRESS")) {
+        const ip = item[key];
+        if (ip) {
+          ipV6Addresses.push(ip.replace(/\/[0-9]{2}/g, ""));
+        }
+      }
+    });
+
     return {
       device: item["GENERAL.DEVICE"],
       type: item["GENERAL.TYPE"],
       state: statesMap[state],
       connection: item["GENERAL.CONNECTION"],
       mac: item["GENERAL.HWADDR"],
-      ipV4: item["IP4.ADDRESS[1]"]?.replace(/\/[0-9]{2}/g, ""),
+      ipV4: ipV4Addresses,
       netV4: item["IP4.ADDRESS[1]"],
       gatewayV4: item["IP4.GATEWAY"],
-      ipV6: item["IP6.ADDRESS[1]"]?.replace(/\/[0-9]{2}/g, ""),
+      ipV6: ipV6Addresses,
       netV6: item["IP6.ADDRESS[1]"],
       gatewayV6: item["IP6.GATEWAY"],
     };
