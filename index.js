@@ -416,7 +416,7 @@ const setDhcpConnection = (profile) => {
 };
 
 // Set static IP for a connection profile
-const setStaticIpConnection = (profile, ipv4, gateway, dns = []) => {
+const setStaticIpConnection = (profile, ipv4, gateway, mask, dns = []) => {
   const dnsServers = Array.isArray(dns) 
     ? dns.join(",") 
     : typeof dns === "string" && dns.length > 0 
@@ -426,7 +426,7 @@ const setStaticIpConnection = (profile, ipv4, gateway, dns = []) => {
   const cmd = [
     "connection", "modify", String(profile),
     "ipv4.method", "manual",
-    "ipv4.addresses", `${ipv4}/24`,
+    "ipv4.addresses", `${ipv4}/${mask}`,
     "ipv4.gateway", gateway
   ];
   if (dnsServers) {
