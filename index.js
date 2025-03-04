@@ -382,31 +382,24 @@ const getWifiList = async (reScan = false) => {
 };
 
 const wifiConnect = (profile, ssid, password, hidden = false) => {
-  if (!hidden) {
-    return cli([
-      "nmcli",
-      "connection",
-      "modify",
-      profile,
-      "802-11-wireless.ssid",
-      String(ssid),
-      "wifi-sec.psk",
-      String(password),
-    ]);
-  } else {
-    return cli([
-      "nmcli",
-      "connection",
-      "modify",
-      profile,
-      "802-11-wireless.ssid",
-      String(ssid),
-      "wifi-sec.psk",
-      String(password),
-      "hidden",
-      "yes"
-    ]);
+  let command = [
+    "nmcli",
+    "connection",
+    "modify",
+    profile,
+    "802-11-wireless.ssid",
+    String(ssid),
+    "wifi-sec.psk",
+    String(password),
+  ];
+
+  if (hidden) {
+    command.push("802-11-wireless.hidden", "yes");
   }
+
+  return cli(command).then(() => {
+    return cli(["nmcli", "connection", "up", profile]);
+  });
 };
 
 // Set interface to DHCP
