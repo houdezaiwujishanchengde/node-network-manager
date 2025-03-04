@@ -397,6 +397,8 @@ const wifiConnect = (profile, ssid, password, hidden = false) => {
     command.push("802-11-wireless.hidden", "yes");
   }
 
+  console.log("Running command:", command);
+
   return cli(command).then(() => {
     return cli(["nmcli", "connection", "up", profile]);
   });
