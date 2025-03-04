@@ -376,7 +376,7 @@ const getWifiList = async (reScan = false) => {
   return data.map((el) => {
     let o = Object.assign({}, el);
     o.inUseBoolean = o["IN-USE"] === "*";
-    o.MODE = el.MODE;
+    o.wifiMode = el.MODE;
     return o;
   });
 };
