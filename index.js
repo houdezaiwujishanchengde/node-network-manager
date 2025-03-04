@@ -373,6 +373,9 @@ const getWifiList = async (reScan = false) => {
       ? ["-m", "multiline", "device", "wifi", "list", "--rescan", "yes"]
       : ["-m", "multiline", "device", "wifi", "list", "--rescan", "no"]
   );
+
+  console.log("Raw data:", data);
+  
   return data.map((el) => {
     let o = Object.assign({}, el);
     o.inUseBoolean = o["IN-USE"] === "*";
