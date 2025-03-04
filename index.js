@@ -381,23 +381,27 @@ const getWifiList = async (reScan = false) => {
   });
 };
 
-const wifiConnect = (ssid, password, hidden = false) => {
+const wifiConnect = (profile, ssid, password, hidden = false) => {
   if (!hidden) {
     return cli([
-      "device",
-      "wifi",
-      "connect",
+      "nmcli",
+      "connection",
+      "modify",
+      profile,
+      "802-11-wireless.ssid",
       String(ssid),
-      "password",
+      "wifi-sec.psk",
       String(password),
     ]);
   } else {
     return cli([
-      "device",
-      "wifi",
-      "connect",
+      "nmcli",
+      "connection",
+      "modify",
+      profile,
+      "802-11-wireless.ssid",
       String(ssid),
-      "password",
+      "wifi-sec.psk",
       String(password),
       "hidden",
       "yes"
