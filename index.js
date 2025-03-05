@@ -1,5 +1,5 @@
 const os = require("os");
-const { spawn } = require("child_process");
+const { spawn,exec } = require("child_process");
 
 // collect ip4 addresses using "os" module
 const getIPv4 = () =>
@@ -381,27 +381,27 @@ const getWifiList = async (reScan = false) => {
   });
 };
 
-const wifiConnect = (profile, ssid, password, hidden = false) => {
-  let command = [
-    "nmcli",
-    "connection",
-    "modify",
-    profile,
-    "802-11-wireless.ssid",
-    String(ssid),
-    "wifi-sec.psk",
-    String(password),
-  ];
-
-  if (hidden) {
-    command.push("802-11-wireless.hidden", "yes");
-  }
-
-  console.log("Running command:", command);
-
-  return cli(command).then(() => {
-    return cli(["nmcli", "connection", "up", profile]);
+const cliSub = (command) => {
+  return new Promise((resolve, reject) => {
+    exec(command.join(" "), (error, stdout, stderr) => {
+      if (error) {
+        reject(stderr || error.message);
+      } else {
+        resolve(stdout);
+      }
+    });
   });
+};
+
+const wifiConnect = async (profile, ssid, password, hidden = false) => {
+  let command = `nmcli connection modify ${profile} 802-11-wireless.ssid '${ssid}' wifi-sec.psk '${password}'`;
+  
+  if (hidden) {
+    command += " 802-11-wireless.hidden yes";
+  }
+  
+  await cliSub([command]);
+  return await cliSub(["nmcli connection up", profile]);
 };
 
 // Set interface to DHCP
