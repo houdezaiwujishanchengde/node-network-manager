@@ -417,6 +417,11 @@ const setDhcpConnection = (profile) => {
 
 // Set static IP for a connection profile
 const setStaticIpConnection = (profile, ipv4, gateway, mask, dns = []) => {
+  // If mask is invalid or not a number, set it to 24
+  if (isNaN(mask) || mask < 1 || mask > 32) {
+    mask = 24;
+  }
+
   const dnsServers = Array.isArray(dns) 
     ? dns.join(",") 
     : typeof dns === "string" && dns.length > 0 
