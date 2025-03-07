@@ -505,6 +505,21 @@ const getMetric = async (profile) => {
   }
 };
 
+const setAutoconnectStatus = async (profile, autoconnect) => {
+  clib(["connection", "modify", String(profile), "connection.autoconnect", autoconnect])
+}
+
+const getAutoconnectStatus = async (profile) => {
+  const data = await clib(["connection", "show", profile]);
+
+  if (Array.isArray(data)) {
+    const connection = data.find(item => item['connection.autoconnect']);
+    return connection['connection.autoconnect'];
+  } else {
+    throw new Error("Unexpected data format");
+  }
+};
+
 // exports
 module.exports = {
   getIPv4,
@@ -547,6 +562,8 @@ module.exports = {
   getWifiInfo,
   setMetric,
   getMetric,
+  setAutoconnectStatus,
+  getAutoconnectStatus
 };
 
 
