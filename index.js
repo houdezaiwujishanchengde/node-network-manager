@@ -471,9 +471,9 @@ const getNetworkDeviceType = async (profile) => {
   return matchedDevice ? matchedDevice.TYPE : `No device found for profile: ${profile}`;
 };
 
-const getWifiInfo = async () => {
+const getWifiInfo = async (profile) => {
   const data = await clib(["device", "wifi", "show"]);
-  const wifiInfo = data.find(item => item.SSID === "Xiaomi_EE7F_5G"); 
+  const wifiInfo = data.find(item => item.SSID === profile); 
 
   if (!wifiInfo) {
     throw new Error("Wi-Fi profile not found");
