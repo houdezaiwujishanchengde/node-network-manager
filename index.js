@@ -481,6 +481,30 @@ const getWifiInfo = async (profile) => {
   return wifiInfo;
 };
 
+const setMetric = (profile, metric) => {
+  clib(["connection", "modify", String(profile), "ipv4.route-metric", String(metric)])
+}
+
+const getMetric = async (profile) => {
+  try {
+    const data = await clib(["connection", "show", profile]);
+  
+    if (Array.isArray(data)) {
+      const metric = data.find(item => item['ipv4.route-metric']); 
+
+      if (metric) {
+        return parseInt(metric['ipv4.route-metric'], 10);
+      } else {
+        throw new Error("Metric not found");
+      }
+    } else {
+      throw new Error("Unexpected data format");
+    }
+  } catch (error) {
+    throw new Error(`Error getting metric for ${profile}: ${error.message}`);
+  }
+};
+
 // exports
 module.exports = {
   getIPv4,
@@ -520,7 +544,9 @@ module.exports = {
   getDnsConnection,
   getIPv4ConfigMethod,
   getNetworkDeviceType,
-  getWifiInfo
+  getWifiInfo,
+  setMetric,
+  getMetric,
 };
 
 
