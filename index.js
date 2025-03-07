@@ -471,6 +471,16 @@ const getNetworkDeviceType = async (profile) => {
   return matchedDevice ? matchedDevice.TYPE : `No device found for profile: ${profile}`;
 };
 
+const getWifiInfo = async () => {
+  const data = await clib(["device", "wifi", "show"]);
+  const wifiInfo = data.find(item => item.SSID === "Xiaomi_EE7F_5G"); 
+
+  if (!wifiInfo) {
+    throw new Error("Wi-Fi profile not found");
+  }
+  return wifiInfo;
+};
+
 // exports
 module.exports = {
   getIPv4,
@@ -510,6 +520,7 @@ module.exports = {
   getDnsConnection,
   getIPv4ConfigMethod,
   getNetworkDeviceType,
+  getWifiInfo
 };
 
 
