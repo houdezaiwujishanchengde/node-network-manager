@@ -282,7 +282,7 @@ const getAllDeviceInfoIPDetailWithType = async (deviceName) => {
       if (key.startsWith("IP4.ADDRESS")) {
         const ip = item[key];
         if (ip) {
-          ipV4Addresses.push(ip.replace(/\/[0-9]{2}/g, ""));
+          ipV4Addresses.push(ip);
         }
       }
     });
@@ -292,7 +292,7 @@ const getAllDeviceInfoIPDetailWithType = async (deviceName) => {
       if (key.startsWith("IP6.ADDRESS")) {
         const ip = item[key];
         if (ip) {
-          ipV6Addresses.push(ip.replace(/\/[0-9]{2}/g, ""));
+          ipV6Addresses.push(ip);
         }
       }
     });
