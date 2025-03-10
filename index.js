@@ -520,6 +520,26 @@ const getAutoconnectStatus = async (profile) => {
   }
 };
 
+const getCurrentSSID = async () => {
+  try {
+    const output = await cliSub(['nmcli', '-t', '-f', 'ACTIVE,SSID', 'dev', 'wifi']);
+    
+    const ssid = output.split('\n')
+      .filter(line => line.includes('yes'))
+      .map(line => line.split(':')[1].trim()) 
+      .shift();
+
+    if (ssid) {
+      return ssid;
+    } else {
+      throw new Error('No active SSID found');
+    }
+  } catch (error) {
+    throw new Error(`Failed to get SSID: ${error.message}`);
+  }
+};
+
+
 // exports
 module.exports = {
   getIPv4,
@@ -563,7 +583,8 @@ module.exports = {
   setMetric,
   getMetric,
   setAutoconnectStatus,
-  getAutoconnectStatus
+  getAutoconnectStatus,
+  getCurrentSSID
 };
 
 
