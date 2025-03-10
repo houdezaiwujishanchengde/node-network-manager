@@ -415,12 +415,25 @@ const setDhcpConnection = (profile) => {
   ]);
 };
 
-// Set static IP for a connection profile
+// Set static IPs for a connection profile
 const setStaticIpConnection = (profile, ipv4, gateway, mask, dns = []) => {
-  // If mask is invalid or not a number, set it to 24
-  if (isNaN(mask) || mask < 1 || mask > 32) {
-    mask = 24;
+  // Ensure ipv4 and mask are arrays. If not, convert them into arrays.
+  const ipv4Array = Array.isArray(ipv4) ? ipv4 : [ipv4];
+  const maskArray = Array.isArray(mask) ? mask : [mask];
+
+  // Validate that ipv4 and mask have the same length
+  if (ipv4Array.length !== maskArray.length) {
+    throw new Error("ipv4 and mask must have the same length");
   }
+
+  // Map each IP and mask to the correct format (ip/cidr)
+  const addresses = ipv4Array.map((ip, index) => {
+    const cidr = maskArray[index];
+    if (!ip || isNaN(cidr) || cidr < 1 || cidr > 32) {
+      return `${ip}/24`; // Default to /24 if invalid
+    }
+    return `${ip}/${cidr}`;
+  }).join(",");
 
   const dnsServers = Array.isArray(dns) 
     ? dns.join(",") 
@@ -431,7 +444,7 @@ const setStaticIpConnection = (profile, ipv4, gateway, mask, dns = []) => {
   const cmd = [
     "connection", "modify", String(profile),
     "ipv4.method", "manual",
-    "ipv4.addresses", `${ipv4}/${mask}`,
+    "ipv4.addresses", addresses,
     "ipv4.gateway", gateway
   ];
   if (dnsServers) {
