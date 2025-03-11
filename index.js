@@ -153,6 +153,8 @@ const connectionDown = (profile) =>
   cli(["connection", "down", String(profile)]);
 const connectionDelete = (profile) =>
   cli(["connection", "delete", String(profile)]);
+const connectionReload = () => cli(["connection", "reload"]);
+
 const getConnectionProfilesList = (active = false) =>
   clib(
     active
@@ -568,6 +570,7 @@ module.exports = {
   connectionUp,
   connectionDown,
   connectionDelete,
+  connectionReload,
   getConnectionProfilesList,
   changeDnsConnection,
   addEthernetConnection,
