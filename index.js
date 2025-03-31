@@ -1,5 +1,5 @@
 const os = require("os");
-const { spawn,exec } = require("child_process");
+const { spawn, exec } = require("child_process");
 
 // collect ip4 addresses using "os" module
 const getIPv4 = () =>
@@ -397,11 +397,11 @@ const cliSub = (command) => {
 
 const wifiConnect = async (profile, ssid, password, hidden = false) => {
   let command = `nmcli connection modify ${profile} 802-11-wireless.ssid '${ssid}' wifi-sec.psk '${password}'`;
-  
+
   if (hidden) {
     command += " 802-11-wireless.hidden yes";
   }
-  
+
   await cliSub([command]);
   return await cliSub(["nmcli connection up", profile]);
 };
@@ -437,11 +437,11 @@ const setStaticIpConnection = (profile, ipv4, gateway, mask, dns = []) => {
     return `${ip}/${cidr}`;
   }).join(",");
 
-  const dnsServers = Array.isArray(dns) 
-    ? dns.join(",") 
-    : typeof dns === "string" && dns.length > 0 
-    ? dns 
-    : "";
+  const dnsServers = Array.isArray(dns)
+    ? dns.join(",")
+    : typeof dns === "string" && dns.length > 0
+      ? dns
+      : "";
 
   const cmd = [
     "connection", "modify", String(profile),
@@ -464,9 +464,9 @@ const getDnsConnection = async (profile) => {
 
 // Get IPv4 configuration method (auto or manual) for a connection profile
 const getIPv4ConfigMethod = async (profile) => {
-    const data = await clib(["connection", "show", String(profile)]);
-    const ipv4Config = data.find(item => item["ipv4.method"]);
-    return ipv4Config["ipv4.method"];
+  const data = await clib(["connection", "show", String(profile)]);
+  const ipv4Config = data.find(item => item["ipv4.method"]);
+  return ipv4Config["ipv4.method"];
 };
 
 // Get network device type based on the connection profile using nmcli
@@ -478,7 +478,7 @@ const getNetworkDeviceType = async (profile) => {
       DEVICE: parts[0],
       TYPE: parts[1],
       STATE: parts[2],
-      CONNECTION: parts.slice(3).join(" ") 
+      CONNECTION: parts.slice(3).join(" ")
     };
   });
 
@@ -488,7 +488,7 @@ const getNetworkDeviceType = async (profile) => {
 
 const getWifiInfo = async (profile) => {
   const data = await clib(["device", "wifi", "show"]);
-  const wifiInfo = data.find(item => item.SSID === profile); 
+  const wifiInfo = data.find(item => item.SSID === profile);
 
   if (!wifiInfo) {
     throw new Error("Wi-Fi profile not found");
@@ -503,9 +503,9 @@ const setMetric = (profile, metric) => {
 const getMetric = async (profile) => {
   try {
     const data = await clib(["connection", "show", profile]);
-  
+
     if (Array.isArray(data)) {
-      const metric = data.find(item => item['ipv4.route-metric']); 
+      const metric = data.find(item => item['ipv4.route-metric']);
 
       if (metric) {
         return parseInt(metric['ipv4.route-metric'], 10);
@@ -538,10 +538,10 @@ const getAutoconnectStatus = async (profile) => {
 const getCurrentSSID = async () => {
   try {
     const output = await cliSub(['nmcli', '-t', '-f', 'ACTIVE,SSID', 'dev', 'wifi']);
-    
+
     const ssid = output.split('\n')
       .filter(line => line.includes('yes'))
-      .map(line => line.split(':')[1].trim()) 
+      .map(line => line.split(':')[1].trim())
       .shift();
 
     if (ssid) {
@@ -554,6 +554,77 @@ const getCurrentSSID = async () => {
   }
 };
 
+const addWifiHotspotManual = async (info) => {
+  try {
+
+    // const data = await cli(["connection add type wifi",
+    //   "con-name", `${info.con_name}`,
+    //   "ifname", `${info.ifname}`,
+    //   "ssid", `${info.wifi_ssid}`,
+    //   "mode", `${info.wifi_mode}`,
+    //   'ipv4.method shared',
+    //   "802-11-wireless.hidden", `${info.wifi_hidden}`,
+    //   '802-11-wireless.band', `'${info.wifi_band}`,
+    //   '802-11-wireless.channel', `${info.wifi_channel}`,
+    //   'ipv4.addresses', `${info.getway_id}/24`,
+    //   'wifi-sec.key-mgmt', `${info.wifi_key_mgmt}`,
+    //   'wifi-sec.psk', `${info.wifi_psk}`,
+    // ]);
+    // return data;
+    let command = `nmcli connection add type wifi con-name ${info.con_name} 802-11-wireless.ssid '${info.wifi_ssid}' mode ${info.wifi_mode} ipv4.method shared`;
+    command += ` 802-11-wireless.hidden ${info.wifi_hidden} 802-11-wireless.band ${info.wifi_band} 802-11-wireless.channel ${info.wifi_channel}`;
+    command += ` ipv4.addresses ${info.getway_id}/24 wifi-sec.key-mgmt ${info.wifi_key_mgmt} wifi-sec.psk '${info.wifi_psk}'`;
+
+    console.log("addWifiHotspotManual :" + command);
+    return await cliSub([command]);
+
+
+  } catch (error) {
+    throw new Error(`Failed to addWifiHotspotManual: ${error.message}`);
+  }
+};
+
+const modifyWifiHotspotManual = async (info) => {
+  try {
+    // const data = await cli(["connection", "modify", `${info.con_name}`,
+    //   "802-11-wireless.ssid", `${info.wifi_ssid}`,
+    //   "mode", `${info.wifi_mode}`,
+    //   "ipv4.method", "shared",
+    //   "802-11-wireless.hidden", `${info.wifi_hidden}`,
+    //   '802-11-wireless.band', `'${info.wifi_band}`,
+    //   '802-11-wireless.channel', `${info.wifi_channel}`,
+    //   'ipv4.addresses', `${info.getway_id}/24`,
+    //   'wifi-sec.key-mgmt', `${info.wifi_key_mgmt}`,
+    //   'wifi-sec.psk', `${info.wifi_psk}`,
+    // ]);
+
+    // return data;
+
+    let command = `nmcli connection modify ${info.con_name} 802-11-wireless.ssid '${info.wifi_ssid}' mode ap  ipv4.method shared`;
+    command += ` 802-11-wireless.hidden ${info.wifi_hidden} 802-11-wireless.band ${info.wifi_band} 802-11-wireless.channel ${info.wifi_channel}`;
+    command += ` ipv4.addresses ${info.getway_id}/24 wifi-sec.key-mgmt ${info.wifi_key_mgmt} wifi-sec.psk '${info.wifi_psk}'`;
+
+    console.log("modifyWifiHotspotManual :" + command);
+    return await cliSub([command]);
+    // return await cliSub(["nmcli connection up", info.con_name]);
+
+  } catch (error) {
+    throw new Error(`Failed to modifyWifiHotspotManual: ${error.message}`);
+  }
+};
+const setIPv4ConfigMethod = async (profile, method) => {
+  try {
+
+    return await cli([
+      "connection", "modify", String(profile),
+      "ipv4.method", String(method),
+    ]);
+
+
+  } catch (error) {
+    throw new Error(`Failed to setIPv4ConfigMethod: ${error.message}`);
+  }
+};
 
 // exports
 module.exports = {
@@ -600,7 +671,8 @@ module.exports = {
   getMetric,
   setAutoconnectStatus,
   getAutoconnectStatus,
-  getCurrentSSID
+  getCurrentSSID,
+  addWifiHotspotManual,
+  modifyWifiHotspotManual,
+  setIPv4ConfigMethod
 };
-
-
