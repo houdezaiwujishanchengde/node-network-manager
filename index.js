@@ -629,8 +629,8 @@ const setIPv4ConfigMethod = async (profile, method) => {
 
 const getIPv4ConfigAddresses = async (profile) => {
   const data = await clib(["connection", "show", String(profile)]);
-  const ipv4Config = data.find(item => item["ipv4.addresses"]);
-  return ipv4Config["ipv4.addresses"];
+  const ipv4Config = data.find(item => item["IP4.ADDRESS[1]"]);
+  return ipv4Config["IP4.ADDRESS[1]"];
 };
 
 // exports
