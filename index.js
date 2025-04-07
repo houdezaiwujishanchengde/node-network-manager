@@ -626,6 +626,13 @@ const setIPv4ConfigMethod = async (profile, method) => {
   }
 };
 
+
+const getIPv4ConfigAddresses = async (profile) => {
+  const data = await clib(["connection", "show", String(profile)]);
+  const ipv4Config = data.find(item => item["ipv4.addresses"]);
+  return ipv4Config["ipv4.addresses"];
+};
+
 // exports
 module.exports = {
   getIPv4,
@@ -674,5 +681,6 @@ module.exports = {
   getCurrentSSID,
   addWifiHotspotManual,
   modifyWifiHotspotManual,
-  setIPv4ConfigMethod
+  setIPv4ConfigMethod,
+  getIPv4ConfigAddresses
 };
