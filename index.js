@@ -628,9 +628,23 @@ const setIPv4ConfigMethod = async (profile, method) => {
 
 
 const getIPv4ConfigAddresses = async (profile) => {
+  // const data = await clib(["connection", "show", String(profile)]);
+  // const ipv4Config = data.find(item => item["IP4.ADDRESS[1]"]);
+  // if (ipv4Config === undefined) {
+  //   return "no";
+  // }
+  // return ipv4Config["IP4.ADDRESS[1]"];
+
+  //IP4.ADDRESS[1]:The actual effective address of the device
+  //ipv4.addresses:static address (method=manual)
   const data = await clib(["connection", "show", String(profile)]);
-  const ipv4Config = data.find(item => item["IP4.ADDRESS[1]"]);
-  return ipv4Config["IP4.ADDRESS[1]"];
+  const ipv4Config = data.find(item => item["ipv4.addresses"]);
+
+  if (ipv4Config === undefined) {
+    return "no";
+  }
+
+  return ipv4Config["ipv4.addresses"];
 };
 
 // exports
